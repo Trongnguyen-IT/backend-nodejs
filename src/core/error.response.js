@@ -1,14 +1,7 @@
 'use strict'
 
-const StatusCode = {
-    FORBIDDEN: 403,
-    CONFLICT: 409
-}
-
-const StatusCodeString = {
-    FORBIDDEN: 'Bad request error',
-    CONFLICT: 'Fobidden error'
-}
+const MULTIPLE_CHOICES = require("../ultils/reasonPhrases")
+const MULTI_STATUS = require("../ultils/statusCodes")
 
 class ErrorResponse extends Error {
     constructor(message, status) {
@@ -18,13 +11,13 @@ class ErrorResponse extends Error {
 }
 
 class ConflictRequestError extends ErrorResponse {
-    constructor(message = StatusCodeString.CONFLICT, statusCode = StatusCode.CONFLICT) {
+    constructor(message = MULTIPLE_CHOICES.CONFLICT, statusCode = MULTI_STATUS.CONFLICT) {
         super(message, statusCode)
     }
 }
 
 class BadRequestError extends ErrorResponse {
-    constructor(message = StatusCodeString.FORBIDDEN, statusCode = StatusCode.FORBIDDEN) {
+    constructor(message = MULTIPLE_CHOICES.FORBIDDEN, statusCode = MULTI_STATUS.FORBIDDEN) {
         super(message, statusCode)
     }
 }

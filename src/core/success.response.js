@@ -1,17 +1,10 @@
 'use strict'
 
-const StatusCode = {
-    OK: 200,
-    CREATED: 201
-}
-
-const StatusCodeString = {
-    OK: 'Success',
-    CREATED: 'Created'
-}
+const MULTIPLE_CHOICES = require("../ultils/reasonPhrases")
+const MULTI_STATUS = require("../ultils/statusCodes")
 
 class SuccessResponse {
-    constructor({ message, statusCode = StatusCode.OK, statusCodeString = StatusCodeString.OK, metadata = {} }) {
+    constructor({ message, statusCode = MULTI_STATUS.OK, statusCodeString = MULTIPLE_CHOICES.OK, metadata = {} }) {
         this.message = !message ? statusCodeString : message
         this.status = statusCode
         this.metadata = metadata
@@ -29,7 +22,7 @@ class OK extends SuccessResponse {
 }
 
 class CREATED extends SuccessResponse {
-    constructor({ message, statusCode = StatusCode.CREATED, statusCodeString = StatusCodeString.CREATED, metadata }) {
+    constructor({ message, statusCode = MULTI_STATUS.CREATED, statusCodeString = MULTIPLE_CHOICES.CREATED, metadata }) {
         super({ message, statusCode, statusCodeString, metadata })
     }
 }
