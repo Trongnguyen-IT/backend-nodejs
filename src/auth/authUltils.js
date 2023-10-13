@@ -9,7 +9,7 @@ const createTokenPair = async (payload, publicKey, privateKey) => {
             expiresIn: '2 days'
         })
 
-        const refreshTokenToken = jwt.sign(payload, privateKey, {
+        const refreshToken = jwt.sign(payload, privateKey, {
             //algorithm: 'RS256',
             expiresIn: '7 days'
         })
@@ -22,11 +22,15 @@ const createTokenPair = async (payload, publicKey, privateKey) => {
             }
         })
 
-        return { accessToken, refreshTokenToken }
+        return { accessToken, refreshToken }
 
     } catch (error) {
 
     }
 }
 
-module.exports = { createTokenPair }
+const verifyJWT = async (token, secretKey) => {
+    return jwt.verify(token, secretKey)
+}
+
+module.exports = { createTokenPair, verifyJWT }

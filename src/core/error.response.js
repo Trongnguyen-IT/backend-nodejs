@@ -22,7 +22,28 @@ class BadRequestError extends ErrorResponse {
     }
 }
 
+class AuthFailureError extends ErrorResponse {
+    constructor(message = MULTIPLE_CHOICES.UNAUTHORIZED, statusCode = MULTI_STATUS.UNAUTHORIZED) {
+        super(message, statusCode)
+    }
+}
+
+class NotFoundError extends ErrorResponse {
+    constructor(message = MULTIPLE_CHOICES.NOT_FOUND, statusCode = MULTI_STATUS.NOT_FOUND) {
+        super(message, statusCode)
+    }
+}
+
+class ForbiddenError extends ErrorResponse {
+    constructor(message = MULTIPLE_CHOICES.FORBIDDEN, statusCode = MULTI_STATUS.FORBIDDEN) {
+        super(message, statusCode)
+    }
+}
+
 module.exports = {
     ConflictRequestError,
-    BadRequestError
+    BadRequestError,
+    AuthFailureError,
+    NotFoundError,
+    ForbiddenError
 }

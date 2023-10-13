@@ -1,7 +1,7 @@
 'use strict'
 
 const express = require('express')
-const routes = require('./auth')
+const routes = require('./access')
 const { apiKey, permission } = require('../auth/checkAuth')
 
 const router = express.Router()

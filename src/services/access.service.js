@@ -4,9 +4,9 @@ const shopModel = require('../models/shop.model')
 const bcrypt = require('bcrypt')
 const crypto = require('node:crypto')
 const keyTokenService = require('./keyToken.service')
-const { createTokenPair } = require('../auth/authUltils')
+const { createTokenPair, verifyJWT } = require('../auth/authUltils')
 const { getDataInfo } = require('../ultils/getDataInfo')
-const { BadRequestError } = require('../core/error.response')
+const { BadRequestError, ForbiddenError, AuthFailureError } = require('../core/error.response')
 const { findByEmail } = require('./shop.service')
 
 const roleShop = {
@@ -17,6 +17,55 @@ const roleShop = {
 }
 
 class AccessService {
+    async handleRefreshToken(refreshToken) {
+        const foundToken = await keyTokenService.findByRefreshTokenUsed(refreshToken)
+        if (foundToken) {
+            const { userId, email } = await verifyJWT(refreshToken, foundToken.privateKey)
+
+            console.log({ userId, email });
+
+            await keyTokenService.deleteKeyByUserId(userId)
+
+            throw new ForbiddenError()
+        }
+
+        const holderToken = await keyTokenService.findByRefreshToken({ refreshToken })
+        if (!holderToken) throw new ForbiddenError('Not registered')
+
+        const { userId, email } = await verifyJWT(refreshToken, holderToken.privateKey)
+
+        const foundShop = await findByEmail({ email })
+
+        if (!foundShop) throw new AuthFailureError('Not registerd')
+
+        const tokens = await createTokenPair(
+            {
+                userId: foundShop._id,
+                email: foundShop.email
+            }, holderToken.publicKey, holderToken.privateKey)
+
+        await holderToken.updateOne({
+            $set: {
+                refreshToken: tokens.refreshToken
+            },
+            $addToSet: {
+                refreshTokensUsed: refreshToken
+            }
+        })
+
+        return {
+            user: { userId, email },
+            tokens
+        }
+    }
+
+    async logout(keyStore) {
+        const delKey = await keyTokenService.removeKeyById(keyStore._id)
+        console.log('del', delKey);
+
+        return delKey
+    }
+
     async login({ email, password, refreshToken = null }) {
         const existShop = await findByEmail({ email })
 
@@ -24,7 +73,7 @@ class AccessService {
             throw new BadRequestError('Shop is not register')
         }
         const match = await bcrypt.compare(password, existShop.password)
-        
+
         if (!match) {
             throw new BadRequestError('Password is incorrect!')
         }
@@ -39,7 +88,7 @@ class AccessService {
             }, publicKey, privateKey)
 
         //const publicKeyString = await keyTokenService.createKeyToken(newShop._id, publicKey, privateKey)
-        const keyStore = await keyTokenService.createKeyToken(
+        await keyTokenService.createKeyToken(
             {
                 userId: existShop._id,
                 publicKey,
