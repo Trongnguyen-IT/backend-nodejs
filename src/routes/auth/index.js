@@ -1,10 +1,13 @@
 'use strict'
 
 const express = require('express')
-const router = express.Router()
-const authenticationController = require('../../controllers/auth.controller')
+const { asyncHandler } = require('../../auth/checkAuth')
+const authenticationController = require('../../controllers/access.controller')
 
-//signup
-router.post('/authentication/signup', authenticationController.signUp)
+const router = express.Router()
+
+
+router.post('/authentication/signup', asyncHandler(authenticationController.signUp))
+router.post('/authentication/login', asyncHandler(authenticationController.login))
 
 module.exports = router
