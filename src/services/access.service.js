@@ -21,15 +21,13 @@ class AccessService {
         const foundToken = await keyTokenService.findByRefreshTokenUsed(refreshToken)
         if (foundToken) {
             const { userId, email } = await verifyJWT(refreshToken, foundToken.privateKey)
-
-            console.log({ userId, email });
-
+            
             await keyTokenService.deleteKeyByUserId(userId)
 
-            throw new ForbiddenError()
+            throw new ForbiddenError('Something wrong')
         }
 
-        const holderToken = await keyTokenService.findByRefreshToken({ refreshToken })
+        const holderToken = await keyTokenService.findByRefreshToken(refreshToken)
         if (!holderToken) throw new ForbiddenError('Not registered')
 
         const { userId, email } = await verifyJWT(refreshToken, holderToken.privateKey)
