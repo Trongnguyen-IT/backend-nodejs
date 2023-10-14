@@ -18,6 +18,15 @@ class ProductController {
         }).send(res)
     }
 
+    async findAllPublishedInShop(req, res, next) {
+        const result = await productService.findAllPublishedInShop({ product_shop: req.user.userId })
+
+        return new CREATED({
+            message: 'Get published OK!',
+            metadata: result
+        }).send(res)
+    }
+
     async createProduct(req, res, next) {
         const result = await productService.createProduct(req.body.product_type, {
             ...req.body,
@@ -26,6 +35,27 @@ class ProductController {
 
         return new CREATED({
             message: 'Registered OK!',
+            metadata: result
+        }).send(res)
+    }
+
+    async publishProductInShop(req, res, next) {
+        console.log('req',req);
+        const result = await productService.publishProductInShop({ product_shop: req.user.userId, product_id: req.params.id })
+
+        return new CREATED({
+            message: 'Published OK!',
+            metadata: result
+        }).send(res)
+    }
+
+    
+    async unPublishProductInShop(req, res, next) {
+        console.log('req',req);
+        const result = await productService.unPublishProductInShop({ product_shop: req.user.userId, product_id: req.params.id })
+
+        return new CREATED({
+            message: 'Un published OK!',
             metadata: result
         }).send(res)
     }
