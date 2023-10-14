@@ -2,6 +2,7 @@
 
 const { BadRequestError } = require("../core/error.response")
 const { product, clothing, electronic } = require("../models/product.model")
+const { findAllDraftInShop } = require("../models/repositories/product.repo")
 
 class ProductFactory {
     static productRegistry = {}
@@ -27,6 +28,11 @@ class ProductFactory {
         //     default:
         //         throw new BadRequestError('Invalid type ' + type)
         // }
+    }
+
+    static async findAllDraftInShop({ product_shop, limit = 50, skip = 0 }) {
+        const query = { product_shop, isDraft: true }
+        return await findAllDraftInShop({ query, limit, skip })
     }
 }
 
@@ -56,7 +62,7 @@ class Product {
 
 class Clothing extends Product {
     async createProduct() {
-        const newClothing = await clothing.create({ ...this.attributes, product_shop: this.product_shop })
+        const newClothing = await clothing.create({ ...this.product_attributes, product_shop: this.product_shop })
         if (!newClothing) throw new BadRequestError('Create clothing error')
 
         const newProduct = await super.createProduct(newClothing._id)
@@ -68,7 +74,7 @@ class Clothing extends Product {
 
 class Electronic extends Product {
     async createProduct() {
-        const newElectronic = await electronic.create({ ...this.attributes, product_shop: this.product_shop })
+        const newElectronic = await electronic.create({ ...this.product_attributes, product_shop: this.product_shop })
         if (!newElectronic) throw new BadRequestError('Create electronic error')
 
         const newProduct = await super.createProduct(newElectronic._id)

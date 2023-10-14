@@ -1,7 +1,7 @@
 'use strict'
 
 const { Schema, Types, model } = require('mongoose')
-const { default: slugify } = require('slugify')
+const  slugify  = require('slugify')
 
 const DOCUMENT_NAME = 'Product'
 
@@ -31,7 +31,7 @@ const productSchema = new Schema({
 })
 
 //document middleware. run before save and create
-productSchema.pre('save', next => {
+productSchema.pre('save', function (next) {
     this.product_slug = slugify(this.product_name, { lower: true })
     next()
 })
