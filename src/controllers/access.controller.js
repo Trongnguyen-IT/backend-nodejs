@@ -3,7 +3,13 @@ const accessService = require("../services/access.service")
 
 class AuthenticationController {
     async handleRefreshToken(req, res, next) {
-        const result = await accessService.handleRefreshToken(req.body.refreshToken)
+        console.log('req',req);
+        const result = await accessService.handleRefreshToken(
+            {
+                refreshToken: req.refreshToken,
+                user: req.user,
+                keyStore: req.keyStore
+            })
 
         return new SuccessResponse({
             message: 'Refresh token success!',
