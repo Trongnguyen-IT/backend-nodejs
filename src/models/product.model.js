@@ -1,7 +1,7 @@
 'use strict'
 
 const { Schema, Types, model } = require('mongoose')
-const  slugify  = require('slugify')
+const slugify = require('slugify')
 
 const DOCUMENT_NAME = 'Product'
 
@@ -29,6 +29,9 @@ const productSchema = new Schema({
     timestamps: true,
     collation: { locale: 'en_US', strength: 1 }
 })
+
+//create index
+productSchema.index({ product_name: 'text', product_description: 'text' })
 
 //document middleware. run before save and create
 productSchema.pre('save', function (next) {

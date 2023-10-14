@@ -6,7 +6,8 @@ const {
     findAllDraftInShop,
     publishProductInShop,
     findAllPublishedInShop,
-    unPublishProductInShop } = require("../models/repositories/product.repo")
+    unPublishProductInShop,
+    searchProduct } = require("../models/repositories/product.repo")
 
 class ProductFactory {
     static productRegistry = {}
@@ -21,6 +22,10 @@ class ProductFactory {
         if (!productClass) throw new BadRequestError('Invalid type ' + type)
 
         return new productClass(payload).createProduct()
+    }
+
+    static async searchProduct({ keyword }) {
+        return await searchProduct({ keyword })
     }
 
     static async findAllDraftInShop({ product_shop, limit = 50, skip = 0 }) {

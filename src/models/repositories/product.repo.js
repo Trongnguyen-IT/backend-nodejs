@@ -2,6 +2,21 @@
 
 const { product } = require("../product.model")
 
+const searchProduct = async ({ keyword }) => {
+    console.log('keyword', keyword);
+    const regexSearch = new RegExp(keyword)
+    return await product.find(
+        {
+            isDraft: false,
+            $text: { $search: regexSearch }
+        },
+        {
+            score: { $meta: 'textScore' }
+        })
+        .sort({ score: { $meta: 'textScore' } })
+        .lean()
+}
+
 const findAllDraftInShop = async ({ query, limit, skip }) => {
     return await queryProductInShop(query, limit, skip)
 }
@@ -47,5 +62,6 @@ module.exports = {
     findAllDraftInShop,
     publishProductInShop,
     findAllPublishedInShop,
-    unPublishProductInShop
+    unPublishProductInShop,
+    searchProduct
 }

@@ -2,6 +2,16 @@ const { OK, CREATED, SuccessResponse } = require("../core/success.response")
 const productService = require("../services/product.service")
 
 class ProductController {
+    async searchProduct(req, res, next) {
+        const result = await productService.searchProduct(req.params)
+
+        return new CREATED({
+            message: 'Search products OK!',
+            metadata: result
+        }).send(res)
+    }
+
+
     /**
      * @desc Get all draft
      * @param {Number} limit 
@@ -40,7 +50,7 @@ class ProductController {
     }
 
     async publishProductInShop(req, res, next) {
-        console.log('req',req);
+        console.log('req', req);
         const result = await productService.publishProductInShop({ product_shop: req.user.userId, product_id: req.params.id })
 
         return new CREATED({
@@ -49,9 +59,9 @@ class ProductController {
         }).send(res)
     }
 
-    
+
     async unPublishProductInShop(req, res, next) {
-        console.log('req',req);
+        console.log('req', req);
         const result = await productService.unPublishProductInShop({ product_shop: req.user.userId, product_id: req.params.id })
 
         return new CREATED({

@@ -7,6 +7,8 @@ const { authentication } = require('../../auth/checkAuth')
 
 const router = express.Router()
 
+router.get('/search/:keyword', asyncHandler(productController.searchProduct))
+
 router.use(authentication)
 
 router.post('/create', asyncHandler(productController.createProduct))
